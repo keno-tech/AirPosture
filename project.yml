@@ -1,0 +1,14 @@
+name: AirPosture
+options:
+  bundleIdPrefix: com.example
+targets:
+  AirPosture:
+    type: application
+    platform: iOS
+    deploymentTarget: "15.0"
+    sources: [AirPosture]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.AirPosture
+        INFOPLIST_FILE: AirPosture/Info.plist
+        DEVELOPMENT_TEAM: "" # User to fill if needed

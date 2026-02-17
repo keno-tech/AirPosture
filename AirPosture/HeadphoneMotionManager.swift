@@ -10,19 +10,12 @@ class HeadphoneMotionManager: NSObject, ObservableObject, CMHeadphoneMotionManag
     @Published var pitch: Double = 0.0
     @Published var roll: Double = 0.0
     @Published var yaw: Double = 0.0
+    @Published var badPostureThreshold: Double = 0.4
     
     override init() {
         super.init()
         self.isDeviceSupported = motionManager.isDeviceMotionAvailable
         self.motionManager.delegate = self
-        
-        // Initial check? 
-        // motionManager.isDeviceMotionActive is not enough.
-        // There is no direct "isConnected" property on CMHeadphoneMotionManager other than delegate.
-        // However, we can try to start updates to see if it works, but that might be aggressive.
-        // Best practice: Assume disconnected until delegate fires, OR prompt user to connect.
-        // Actually, let's see if we can infer it. 
-        // For now, we rely on delegate.
     }
     
     func headphoneMotionManagerDidConnect(_ manager: CMHeadphoneMotionManager) {
@@ -61,7 +54,7 @@ class HeadphoneMotionManager: NSObject, ObservableObject, CMHeadphoneMotionManag
             // Posture Check Logic
             // Positive pitch usually means looking down. 
             // Threshold can be adjusted.
-            if abs(self.pitch) > 0.5 {
+            if abs(self.pitch) > self.badPostureThreshold {
                 self.onBadPosture?()
             } else {
                 self.onGoodPosture?()

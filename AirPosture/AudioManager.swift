@@ -40,22 +40,39 @@ class AudioManager: ObservableObject {
     func startDucking() {
         print("Ducking audio...")
         do {
-            // .duckOthers will lower the volume of other audio apps
-            try AVAudioSession.sharedInstance().setCategory(.playback, options: [.duckOthers, .allowBluetooth])
+            // Try setting category directly
+            try AVAudioSession.sharedInstance().setCategory(.playback, options: [.duckOthers, .interruptSpokenAudioAndMixWithOthers])
             try AVAudioSession.sharedInstance().setActive(true)
         } catch {
-            print("Failed to start ducking: \(error)")
+            print("Failed to start ducking (direct): \(error)")
+            // Fallback: Deactivate and retry
+            do {
+                try AVAudioSession.sharedInstance().setActive(false)
+                try AVAudioSession.sharedInstance().setCategory(.playback, options: [.duckOthers, .interruptSpokenAudioAndMixWithOthers])
+                try AVAudioSession.sharedInstance().setActive(true)
+                print("Ducking started via fallback")
+            } catch {
+                print("Failed to start ducking (fallback): \(error)")
+            }
         }
     }
     
     func stopDucking() {
         print("Restoring audio...")
         do {
-            // .mixWithOthers allows other audio to play at full volume (along with our silence)
-            try AVAudioSession.sharedInstance().setCategory(.playback, options: [.mixWithOthers, .allowBluetooth])
-            try AVAudioSession.sharedInstance().setActive(true)
+            try AVAudioSession.sharedInstance().setCategory(.playback, options: [.mixWithOthers])
+            try AVAudioSession.sharedInstance().setActive(true, options: .notifyOthersOnDeactivation)
         } catch {
-            print("Failed to stop ducking: \(error)")
+            print("Failed to stop ducking (direct): \(error)")
+             // Fallback: Deactivate and retry
+             do {
+                 try AVAudioSession.sharedInstance().setActive(false)
+                 try AVAudioSession.sharedInstance().setCategory(.playback, options: [.mixWithOthers])
+                 try AVAudioSession.sharedInstance().setActive(true, options: .notifyOthersOnDeactivation)
+                 print("Audio restored via fallback")
+             } catch {
+                 print("Failed to stop ducking (fallback): \(error)")
+             }
         }
     }
     

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0B2A0F78DB436A2C1143E5D3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE7B35A4E8F77869218B928 /* ContentView.swift */; };
+		3E19D87457AFC79AE0038A95 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5B67E3D27955549F8B84FDF4 /* Assets.xcassets */; };
 		58F178E896CD700E949A1DEB /* HeadphoneMotionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B17FD1CA0453B7FF117B0E6A /* HeadphoneMotionManager.swift */; };
 		AA6B7777EBD3247FFEE397B1 /* AirPostureApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA39E2BE46EB113CCC89090 /* AirPostureApp.swift */; };
 		B0E84B74E6BA3EEB6F8AC3F5 /* AudioManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EBD27F44F1682BC57B853C7 /* AudioManager.swift */; };
@@ -16,6 +17,7 @@
 /* Begin PBXFileReference section */
 		343495399AAB3683196F76DE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		4EA39E2BE46EB113CCC89090 /* AirPostureApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirPostureApp.swift; sourceTree = "<group>"; };
+		5B67E3D27955549F8B84FDF4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8EBD27F44F1682BC57B853C7 /* AudioManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioManager.swift; sourceTree = "<group>"; };
 		B17FD1CA0453B7FF117B0E6A /* HeadphoneMotionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadphoneMotionManager.swift; sourceTree = "<group>"; };
 		D420E5F573C3F1F706E2F6D4 /* AirPosture.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AirPosture.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -43,6 +45,7 @@
 			isa = PBXGroup;
 			children = (
 				4EA39E2BE46EB113CCC89090 /* AirPostureApp.swift */,
+				5B67E3D27955549F8B84FDF4 /* Assets.xcassets */,
 				8EBD27F44F1682BC57B853C7 /* AudioManager.swift */,
 				FDE7B35A4E8F77869218B928 /* ContentView.swift */,
 				B17FD1CA0453B7FF117B0E6A /* HeadphoneMotionManager.swift */,
@@ -59,6 +62,7 @@
 			buildConfigurationList = CF7B2CB7C64564DCAC4FDC20 /* Build configuration list for PBXNativeTarget "AirPosture" */;
 			buildPhases = (
 				C6F5E8CA12D81CC97680BDBB /* Sources */,
+				E21F32893CC0CF55B62B8FD7 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -97,6 +101,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		E21F32893CC0CF55B62B8FD7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3E19D87457AFC79AE0038A95 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		C6F5E8CA12D81CC97680BDBB /* Sources */ = {
@@ -180,7 +195,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.AirPosture;
+				PRODUCT_BUNDLE_IDENTIFIER = com.keno.AirPosture;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -198,7 +213,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.AirPosture;
+				PRODUCT_BUNDLE_IDENTIFIER = com.keno.AirPosture;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

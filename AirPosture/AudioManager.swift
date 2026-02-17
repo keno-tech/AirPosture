@@ -122,9 +122,19 @@ class AudioManager: ObservableObject {
         stopDucking()
     }
     
+    @Published var warningVolume: Float = 0.8
+    
     func playPostureWarning() {
         let utterance = AVSpeechUtterance(string: "Posture")
         utterance.rate = 0.5
+        utterance.volume = warningVolume
+        synthesizer.speak(utterance)
+    }
+    
+    func playStartSound() {
+        let utterance = AVSpeechUtterance(string: "AirPosture Started")
+        utterance.rate = 0.5
+        utterance.volume = warningVolume
         synthesizer.speak(utterance)
     }
 }

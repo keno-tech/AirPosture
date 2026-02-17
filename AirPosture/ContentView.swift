@@ -22,14 +22,8 @@ struct ContentView: View {
                     .foregroundColor(motionManager.isConnected ? .primary : .secondary)
             }
             
-            // Posture Data Visualization
-            if isMonitoring {
-                VStack(spacing: 15) {
-                    Text("Posture Monitoring Active")
-                        .font(.title2)
-                        .bold()
-                    
-                
+            // Settings Section (Always Visible)
+            VStack(spacing: 20) {
                 // Sensitivity / Threshold Slider
                 VStack {
                     Text("Sensitivity: \(Int(motionManager.badPostureThreshold * 100))%")
@@ -48,11 +42,36 @@ struct ContentView: View {
                     .padding(.horizontal)
                 }
                 
+                // Volume Slider
+                VStack {
+                    Text("Voice Volume: \(Int(audioManager.warningVolume * 100))%")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    
+                    HStack {
+                        Image(systemName: "speaker.fill")
+                            .foregroundColor(.secondary)
+                        Slider(value: $audioManager.warningVolume, in: 0.0...1.0)
+                        Image(systemName: "speaker.wave.3.fill")
+                            .foregroundColor(.secondary)
+                    }
+                    .padding(.horizontal)
+                }
+            }
+            .padding(.vertical)
+            
+            // Posture Data Visualization
+            if isMonitoring {
+                
+                Text("Posture Monitoring Active")
+                    .font(.title2)
+                    .bold()
+                
                 // Man Figure Visualization
                 ManFigureView(angle: motionManager.badPostureThreshold)
                     .frame(height: 150)
-                    .padding() 
-                    
+                    .padding()
+                
                 HStack {
                     Spacer()
                     PostureMetricView(label: "Pitch", value: motionManager.pitch)
@@ -75,90 +94,90 @@ struct ContentView: View {
                         .fontWeight(.medium)
                         .foregroundColor(.green)
                 }
+            } else {
+                Text("Press Start to begin monitoring")
+                    .foregroundColor(.secondary)
             }
+            
+            Spacer()
+            
+            // Controls
+            Button(action: toggleMonitoring) {
+                Text(isMonitoring ? "Stop Monitoring" : "Start Monitoring")
+                    .font(.title3)
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(isMonitoring ? Color.red : Color.blue)
+                    .cornerRadius(15)
+            }
+            .disabled(!motionManager.isConnected)
+            .opacity(motionManager.isConnected ? 1.0 : 0.6)
+            
+        }
+        .padding()
+        .onAppear {
+            // Start motion updates immediately to detect connection status
+            // This will trigger the permission prompt
+            motionManager.startUpdates()
+        }
+    }
+    
+    func toggleMonitoring() {
+        if isMonitoring {
+            // Stop "Monitoring"
+            motionManager.onBadPosture = nil
+            motionManager.onGoodPosture = nil
+            audioManager.stopDucking() // Ensure we don't leave it dimmed
+            audioManager.stopSilentLoop()
+            isMonitoring = false
         } else {
-            Text("Press Start to begin monitoring")
-                .foregroundColor(.secondary)
-        }
-        
-        Spacer()
-        
-        // Controls
-        Button(action: toggleMonitoring) {
-            Text(isMonitoring ? "Stop Monitoring" : "Start Monitoring")
-                .font(.title3)
-                .fontWeight(.bold)
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(isMonitoring ? Color.red : Color.blue)
-                .cornerRadius(15)
-        }
-        .disabled(!motionManager.isConnected)
-        .opacity(motionManager.isConnected ? 1.0 : 0.6)
-        
-    }
-    .padding()
-    .onAppear {
-        // Start motion updates immediately to detect connection status
-        // This will trigger the permission prompt
-        motionManager.startUpdates()
-    }
-}
-
-func toggleMonitoring() {
-    if isMonitoring {
-        // Stop "Monitoring"
-        motionManager.onBadPosture = nil
-        motionManager.onGoodPosture = nil
-        audioManager.stopDucking() // Ensure we don't leave it dimmed
-        audioManager.stopSilentLoop()
-        isMonitoring = false
-    } else {
-        audioManager.startBackgroundTask()
-        audioManager.startSilentLoop()
-        
-        // Setup Logic
-        var isDucked = false
-        
-        motionManager.onBadPosture = {
-            if !isDucked {
-                audioManager.startDucking()
-                audioManager.playPostureWarning()
-                isDucked = true
+            audioManager.startBackgroundTask()
+            audioManager.startSilentLoop()
+            audioManager.playStartSound()
+            
+            // Setup Logic
+            var isDucked = false
+            
+            motionManager.onBadPosture = {
+                if !isDucked {
+                    audioManager.startDucking()
+                    audioManager.playPostureWarning()
+                    isDucked = true
+                }
             }
-        }
-        
-        motionManager.onGoodPosture = {
-            if isDucked {
-                audioManager.stopDucking()
-                isDucked = false
+            
+            motionManager.onGoodPosture = {
+                if isDucked {
+                    audioManager.stopDucking()
+                    isDucked = false
+                }
             }
+            
+            isMonitoring = true
         }
-        
-        isMonitoring = true
     }
-}
 }
 
 struct PostureMetricView: View {
-let label: String
-let value: Double
-
-var body: some View {
-    VStack {
-        Text(label)
-            .font(.caption)
-            .foregroundColor(.secondary)
-        Text(String(format: "%.2f", value))
-            .font(.system(.body, design: .monospaced))
-            .fontWeight(.bold)
+    let label: String
+    let value: Double
+    
+    var body: some View {
+        VStack {
+            Text(label)
+                .font(.caption)
+                .foregroundColor(.secondary)
+            Text(String(format: "%.2f", value))
+                .font(.system(.body, design: .monospaced))
+                .fontWeight(.bold)
+        }
+        .frame(width: 80)
+        .padding()
+        .background(Color(.secondarySystemBackground))
+        .cornerRadius(10)
     }
-    .frame(width: 80)
-    .padding()
-    .background(Color(.secondarySystemBackground))
-    .cornerRadius(10)
-}
 }
 
 struct ManFigureView: View {

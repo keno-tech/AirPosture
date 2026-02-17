@@ -10,7 +10,7 @@ class HeadphoneMotionManager: NSObject, ObservableObject, CMHeadphoneMotionManag
     @Published var pitch: Double = 0.0
     @Published var roll: Double = 0.0
     @Published var yaw: Double = 0.0
-    @Published var badPostureThreshold: Double = 0.4
+    @Published var badPostureThreshold: Double = 0.6
     
     override init() {
         super.init()

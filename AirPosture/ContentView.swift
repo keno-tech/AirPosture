@@ -7,7 +7,9 @@ struct ContentView: View {
     @State private var isMonitoring = false
     
     var body: some View {
-        VStack(spacing: 30) {
+        VStack(spacing: 0) {
+            ScrollView {
+                VStack(spacing: 30) {
             
             // Header
             VStack {
@@ -63,23 +65,6 @@ struct ContentView: View {
             // Posture Data Visualization
             if isMonitoring {
                 
-                Text("Posture Monitoring Active")
-                    .font(.title2)
-                    .bold()
-                
-                // Man Figure Visualization
-                ManFigureView(angle: motionManager.badPostureThreshold)
-                    .frame(height: 150)
-                    .padding()
-                
-                HStack {
-                    Spacer()
-                    PostureMetricView(label: "Pitch", value: motionManager.pitch)
-                    Spacer()
-                    PostureMetricView(label: "Roll", value: motionManager.roll)
-                    Spacer()
-                }
-                
                 if abs(motionManager.pitch) > motionManager.badPostureThreshold {
                     Text("BAD POSTURE DETECTED")
                         .font(.title3)
@@ -94,12 +79,31 @@ struct ContentView: View {
                         .fontWeight(.medium)
                         .foregroundColor(.green)
                 }
+                
+                // Man Figure Visualization
+                ManFigureView(angle: motionManager.badPostureThreshold)
+                    .frame(height: 150)
+                    .padding()
+                
+                HStack {
+                    Spacer()
+                    PostureMetricView(label: "Pitch", value: motionManager.pitch)
+                    Spacer()
+                    PostureMetricView(label: "Roll", value: motionManager.roll)
+                    Spacer()
+                }
+                
+                Text("Posture Monitoring Active")
+                    .font(.title2)
+                    .bold()
             } else {
                 Text("Press Start to begin monitoring")
                     .foregroundColor(.secondary)
             }
             
-            Spacer()
+                }
+                .padding()
+            }
             
             // Controls
             Button(action: toggleMonitoring) {

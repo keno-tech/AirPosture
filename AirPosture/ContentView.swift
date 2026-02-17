@@ -112,9 +112,11 @@ func toggleMonitoring() {
         motionManager.onBadPosture = nil
         motionManager.onGoodPosture = nil
         audioManager.stopDucking() // Ensure we don't leave it dimmed
+        audioManager.stopSilentLoop()
         isMonitoring = false
     } else {
         audioManager.startBackgroundTask()
+        audioManager.startSilentLoop()
         
         // Setup Logic
         var isDucked = false

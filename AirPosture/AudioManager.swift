@@ -10,7 +10,7 @@ class AudioManager: ObservableObject {
     private func configureAudioSession() {
         do {
             // Configure the audio session to allow background playback and mixing with other apps
-            try AVAudioSession.sharedInstance().setCategory(.playback, options: [.mixWithOthers, .allowBluetooth])
+            try AVAudioSession.sharedInstance().setCategory(.playback, options: [.mixWithOthers, .allowBluetoothHFP])
             try AVAudioSession.sharedInstance().setActive(true)
             print("Audio session configured successfully")
         } catch {
@@ -18,19 +18,60 @@ class AudioManager: ObservableObject {
         }
     }
     
-    func playSilentLoop() {
-        // Create a silent audio buffer to play
-        // Valid MP3 header + silence or just simple PCM data
-        // For simplicity, we'll try to just activate the session, but for robustness
-        // we might need to play an actual sound.
-        // A common trick is to play a file with 0 volume or silence.
+    private var silentEngine: AVAudioEngine?
+    private var silentPlayer: AVAudioPlayerNode?
+    
+    func startSilentLoop() {
+        print("Starting silent loop...")
         
-        print("Activating audio session...")
-        do {
-            try AVAudioSession.sharedInstance().setActive(true)
-        } catch {
-            print("Failed to activate session: \(error)")
+        if silentEngine != nil {
+             print("Silent loop already running")
+             return
         }
+        
+        let engine = AVAudioEngine()
+        let player = AVAudioPlayerNode()
+        engine.attach(player)
+        
+        let outputFormat = engine.mainMixerNode.outputFormat(forBus: 0)
+        // Create a monophonic format for efficiency, or match output
+        let format = AVAudioFormat(standardFormatWithSampleRate: 44100, channels: 1)!
+        
+        engine.connect(player, to: engine.mainMixerNode, format: format)
+        engine.mainMixerNode.outputVolume = 0.0 // Ensure it is silent at the mixer level too
+        
+        // Generate buffer of silence
+        let frameCount = AVAudioFrameCount(44100) // 1 second
+        guard let buffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: frameCount) else {
+            print("Failed to create buffer")
+            return
+        }
+        buffer.frameLength = frameCount
+        // buffer is initialized to zero (silence)
+        
+        player.scheduleBuffer(buffer, at: nil, options: .loops, completionHandler: nil)
+        
+        do {
+            try engine.start()
+            player.play()
+            self.silentEngine = engine
+            self.silentPlayer = player
+            print("Silent loop started successfully")
+        } catch {
+            print("Failed to start silent loop: \(error)")
+        }
+    }
+    
+    func stopSilentLoop() {
+        if let player = silentPlayer {
+            player.stop()
+        }
+        if let engine = silentEngine {
+            engine.stop()
+        }
+        silentPlayer = nil
+        silentEngine = nil
+        print("Silent loop stopped")
     }
     
     // MARK: - Posture Feedback
